@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Body from "./Body";
 import { products } from "../../data";
-import {
-    Sheet,
-    SheetContent,
-    SheetTrigger,
-  } from "../../components/ui/sheet";
-  
+import { Sheet, SheetContent, SheetTrigger } from "../../components/ui/sheet";
+import FilterBar from "./FilterBar";
 
 const Layout = () => {
   const [search, setSearch] = useState("");
@@ -17,20 +13,39 @@ const Layout = () => {
   }, [search]);
 
   const handleSearch = () => {
-    console.log(search);
     if (search != "") {
       const filtered = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
       );
-      console.log(filtered);
       setProductList(filtered);
     } else {
       setProductList(products);
     }
   };
 
+  const handleSort = (n) => {
+    const sortedProducts = [...productList];
+    switch (n) {
+      case 1:
+        sortedProducts.sort((a, b) => a.price - b.price);
+        setProductList(sortedProducts);
+
+        break;
+      case 2:
+        sortedProducts.sort((a, b) => b.price - a.price);
+        setProductList(sortedProducts);
+
+        break;
+      case 3:
+        sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+        setProductList(sortedProducts);
+
+        break;
+    }
+  };
+
   return (
-    <div className="w-full sm:max-w-2xl h-screen flex flex-col">
+    <div className="w-full sm:max-w-2xl h-screen flex flex-col shadow-md">
       <div className="flex flex-col">
         <div className="w-full h-max p-4 py-5 border-b-2 flex justify-between items-center">
           <svg
@@ -66,7 +81,9 @@ const Layout = () => {
                 />
               </svg>
             </SheetTrigger>
-            <SheetContent className={'bg-white'}></SheetContent>
+            <SheetContent className={"bg-white"}>
+              <FilterBar handleSort={handleSort} />
+            </SheetContent>
           </Sheet>
         </div>
         <div className="w-full flex flex-col p-4">
